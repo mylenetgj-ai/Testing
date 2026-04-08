@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PharmaMastery – PT New Staff Module I</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #19478C;
+    --teal: #009CA2;
+    --sky: #3EB3E1;
+    --sky-light: #e8f7fd;
+    --sky-mid: #b8e4f5;
+    --white: #ffffff;
+    --off-white: #f5fafd;
+    --text-dark: #0d2a50;
+    --text-mid: #3a5a80;
+    --text-muted: #7a9ab8;
+    --success: #009CA2;
+    --fail: #c94040;
+    --border: rgba(25,71,140,0.12);
+    --radius: 16px;
+    --radius-sm: 10px;
+    --shadow: 0 2px 16px rgba(25,71,140,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #d6eef8;
+    min-height: 100vh;
+    color: var(--text-dark);
+  }
+
+  /* ---- SCREENS ---- */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ---- LOGIN ---- */
+  #screen-login {
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, #3EB3E1 0%, #19478C 100%);
+    padding: 2rem;
+  }
+  .login-card {
+    background: white;
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 8px 40px rgba(25,71,140,0.18);
+  }
+  .login-logo {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, var(--sky) 0%, var(--navy) 100%);
+    border-radius: 50%;
+    margin: 0 auto 1.5rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .login-logo svg { width: 36px; height: 36px; fill: white; }
+  .login-card h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.8rem;
+    color: var(--navy);
+    margin-bottom: 0.4rem;
+  }
+  .login-card .subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+  }
+  .login-card input {
+    width: 100%;
+    padding: 0.85rem 1.2rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-dark);
+    background: var(--off-white);
+    outline: none;
+    transition: border-color 0.2s;
+    margin-bottom: 1.2rem;
+  }
+  .login-card input:focus { border-color: var(--sky); }
+  .btn-primary {
+    width: 100%;
+    padding: 0.9rem;
+    background: linear-gradient(135deg, var(--sky) 0%, var(--navy) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-primary:active { transform: scale(0.98); }
+  .error-msg { color: var(--fail); font-size: 0.85rem; margin-bottom: 0.8rem; }
+  .role-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.6rem; text-align: left; }
+  .role-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; margin-bottom: 1.2rem; }
+  .role-btn {
+    padding: 0.75rem;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--off-white);
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-mid);
+    cursor: pointer;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .role-btn:hover { border-color: var(--sky); background: var(--sky-light); }
+  .role-btn.active { border-color: var(--navy); background: rgba(25,71,140,0.07); color: var(--navy); }
+
+  /* ---- DASHBOARD ---- */
+  #screen-dashboard {
+    background: var(--sky-light);
+    padding: 0;
+  }
+  .dash-header {
+    background: linear-gradient(135deg, var(--navy) 0%, #2160a8 100%);
+    padding: 1.5rem 1.5rem 2.5rem;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .dash-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30px; left: -20px; right: -20px;
+    height: 60px;
+    background: var(--sky-light);
+    border-radius: 50%;
+  }
+  .dash-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+  }
+  .dash-greeting {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.4rem;
+  }
+  .dash-greeting span { color: var(--sky); }
+  .btn-leaderboard {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  .dash-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.8rem;
+    position: relative;
+    z-index: 1;
+  }
+  .stat-pill {
+    background: rgba(255,255,255,0.15);
+    border-radius: var(--radius-sm);
+    padding: 0.7rem;
+    text-align: center;
+    backdrop-filter: blur(4px);
+  }
+  .stat-pill .val { font-size: 1.5rem; font-weight: 700; line-height: 1; }
+  .stat-pill .lbl { font-size: 0.7rem; opacity: 0.8; margin-top: 2px; }
+
+  .dash-body { padding: 1.5rem; padding-top: 2rem; flex: 1; }
+  .dash-section-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.8rem;
+  }
+  .topic-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+  .topic-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1rem;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.2s;
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+  .topic-card:hover { border-color: var(--sky); transform: translateY(-2px); }
+  .topic-card.passed { border-color: rgba(0,156,162,0.3); }
+  .topic-card.in-progress { border-color: rgba(62,179,225,0.4); }
+  .topic-card .status-icon {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .topic-card .topic-name {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    line-height: 1.3;
+    margin-bottom: 0.4rem;
+  }
+  .topic-card .topic-meta {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+  .topic-card .pb-bar {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 0.6rem;
+    overflow: hidden;
+  }
+  .topic-card .pb-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--sky), var(--teal));
+    border-radius: 2px;
+    transition: width 0.5s ease;
+  }
+  .op-badge {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: rgba(62,179,225,0.15);
+    color: var(--sky);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* ---- QUIZ ---- */
+  #screen-quiz {
+    background: white;
+    min-height: 100vh;
+  }
+  .quiz-header {
+    background: var(--navy);
+    padding: 1rem 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: white;
+  }
+  .quiz-back {
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .quiz-header-info { flex: 1; }
+  .quiz-header-info .topic-title { font-size: 0.9rem; font-weight: 600; }
+  .quiz-header-info .q-counter { font-size: 0.75rem; opacity: 0.7; margin-top: 1px; }
+  .quiz-progress-bar {
+    height: 3px;
+    background: rgba(255,255,255,0.2);
+    position: relative;
+  }
+  .quiz-progress-fill {
+    position: absolute;
+    top: 0; left: 0;
+    height: 100%;
+    background: var(--sky);
+    transition: width 0.3s ease;
+  }
+  .quiz-body {
+    padding: 1.5rem;
+    flex: 1;
+    overflow-y: auto;
+  }
+  .q-type-badge {
+    display: inline-block;
+    background: var(--sky-light);
+    color: var(--navy);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-bottom: 0.8rem;
+  }
+  .q-text {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+  }
+  .q-subitems {
+    margin-top: 0.6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+  .q-subitem {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 0.92rem;
+    font-weight: 400;
+    color: var(--text-mid);
+    padding: 0.25rem 0.6rem;
+    background: var(--sky-light);
+    border-left: 3px solid var(--sky-mid);
+    border-radius: 0 6px 6px 0;
+    line-height: 1.5;
+  }
+  .q-sub { font-size: 0.85rem; color: var(--text-mid); margin-bottom: 0.5rem; }
+  .options-list { display: flex; flex-direction: column; gap: 0.7rem; }
+  .option-btn {
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1rem;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-dark);
+    transition: all 0.15s;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    line-height: 1.4;
+  }
+  .option-btn:hover:not(:disabled) { border-color: var(--sky); background: var(--sky-light); }
+  .option-btn.selected { border-color: var(--navy); background: rgba(25,71,140,0.06); }
+  .option-key {
+    min-width: 24px; height: 24px;
+    border-radius: 50%;
+    background: var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--text-mid);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .option-btn.selected .option-key {
+    background: var(--navy);
+    color: white;
+  }
+  .option-btn:disabled { cursor: default; }
+  .mrq-hint { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.5rem; font-style: italic; }
+
+  .quiz-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    background: white;
+  }
+  .btn-submit {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--navy);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-submit:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-submit:not(:disabled):hover { background: #2160a8; }
+
+  /* Matching question */
+  .match-container { display: flex; flex-direction: column; gap: 0.8rem; }
+  .match-row {
+    background: var(--off-white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.8rem;
+  }
+  .match-row label { font-size: 0.82rem; font-weight: 600; color: var(--text-mid); display: block; margin-bottom: 0.4rem; }
+  .match-row select {
+    width: 100%;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+    background: white;
+  }
+
+  /* True/False */
+  .tf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; }
+  .tf-btn {
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--border);
+    background: var(--off-white);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--text-dark);
+  }
+  .tf-btn:hover:not(:disabled) { border-color: var(--sky); background: var(--sky-light); }
+  .tf-btn.selected { border-color: var(--navy); background: rgba(25,71,140,0.06); color: var(--navy); }
+
+  /* ---- RESULT ---- */
+  #screen-result {
+    background: var(--off-white);
+    align-items: center;
+    padding: 2rem 1.5rem;
+  }
+  .result-card {
+    background: white;
+    border-radius: 24px;
+    padding: 2.5rem 2rem;
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .result-icon {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    margin: 0 auto 1.2rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2.2rem;
+  }
+  .result-icon.pass { background: rgba(0,156,162,0.1); }
+  .result-icon.fail { background: rgba(201,64,64,0.08); }
+  .result-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    margin-bottom: 0.4rem;
+  }
+  .result-title.pass { color: var(--teal); }
+  .result-title.fail { color: var(--fail); }
+  .result-msg { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .result-score-ring {
+    width: 120px; height: 120px;
+    margin: 0 auto 1.5rem;
+    position: relative;
+  }
+  .result-score-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring-bg { fill: none; stroke: var(--sky-mid); stroke-width: 8; }
+  .ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1s ease; }
+  .ring-fill.pass { stroke: var(--teal); }
+  .ring-fill.fail { stroke: var(--fail); }
+  .result-score-num {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  .result-pb {
+    font-size: 0.8rem;
+    color: var(--teal);
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  .btn-retry {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--fail);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    margin-bottom: 0.7rem;
+    transition: opacity 0.2s;
+  }
+  .btn-retry:hover { opacity: 0.85; }
+  .btn-back-dash {
+    width: 100%;
+    padding: 0.9rem;
+    background: transparent;
+    color: var(--navy);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-back-dash:hover { background: var(--sky-light); }
+
+  /* ---- LEADERBOARD ---- */
+  #screen-leaderboard {
+    background: var(--sky-light);
+  }
+  .lb-header {
+    background: var(--navy);
+    padding: 1rem 1.2rem;
+    display: flex; align-items: center; gap: 1rem;
+    color: white;
+  }
+  .lb-body { padding: 1.5rem; flex: 1; }
+  .lb-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    color: var(--navy);
+    margin-bottom: 0.3rem;
+  }
+  .lb-subtitle { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.2rem; }
+  .lb-row {
+    background: white;
+    border-radius: var(--radius-sm);
+    padding: 0.9rem 1rem;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    box-shadow: var(--shadow);
+  }
+  .lb-rank {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 28px;
+    text-align: center;
+  }
+  .lb-rank.gold { color: #c9960a; }
+  .lb-rank.silver { color: #7a8ea8; }
+  .lb-rank.bronze { color: #a0622a; }
+  .lb-name { flex: 1; font-weight: 500; font-size: 0.9rem; }
+  .lb-name.me { color: var(--navy); font-weight: 700; }
+  .lb-score { font-size: 0.9rem; font-weight: 700; color: var(--teal); }
+  .lb-topics { font-size: 0.72rem; color: var(--text-muted); }
+  .lb-empty { text-align: center; color: var(--text-muted); font-size: 0.9rem; padding: 2rem; }
+
+  /* Formulation metaphor */
+  .formulation-bar {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1rem 1rem 0.8rem;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.5rem;
+  }
+  .form-header-title { font-size: 0.78rem; font-weight: 600; color: var(--text-mid); }
+  .form-header-pct { font-size: 0.78rem; font-weight: 700; color: var(--teal); }
+  #formulation-svg { display: block; width: 100%; }
+
+  @media (max-width: 400px) {
+    .topic-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24"><path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l7.59-7.59L21 8l-9 9z"/></svg>
+    </div>
+    <h1>PharmaMastery</h1>
+    <p class="subtitle">PT New Staff Module I – Self-Paced Learning</p>
+    <input type="text" id="login-name" placeholder="Enter your full name" autocomplete="name" />
+    <div class="role-label">I am a...</div>
+    <div class="role-toggle">
+      <button class="role-btn" id="role-op" onclick="selectRole('OP')">OP</button>
+      <button class="role-btn" id="role-psc" onclick="selectRole('PSC')">PSC</button>
+    </div>
+    <div id="login-error" class="error-msg" style="display:none">Please enter your full name and select a role.</div>
+    <button class="btn-primary" onclick="doLogin()">Begin My Journey</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="screen-dashboard" class="screen">
+  <div class="dash-header">
+    <div class="dash-header-top">
+      <div class="dash-greeting">Hello, <span id="dash-name"></span></div>
+      <button class="btn-leaderboard" onclick="showLeaderboard()">🏆 Rankings</button>
+    </div>
+    <div class="dash-stats">
+      <div class="stat-pill"><div class="val" id="stat-completed">0</div><div class="lbl">Completed</div></div>
+      <div class="stat-pill"><div class="val" id="stat-total">12</div><div class="lbl">Topics</div></div>
+      <div class="stat-pill"><div class="val" id="stat-avg">—</div><div class="lbl">Best Avg</div></div>
+    </div>
+  </div>
+  <div class="dash-body">
+    <div class="formulation-bar">
+      <div class="form-header">
+        <span class="form-header-title">Formulation Journey</span>
+        <span class="form-header-pct" id="form-pct-label">0%</span>
+      </div>
+      <svg id="formulation-svg" viewBox="0 0 340 110" xmlns="http://www.w3.org/2000/svg"></svg>
+    </div>
+    <div class="dash-section-title">Core Topics</div>
+    <div class="topic-grid" id="topic-grid-core"></div>
+    <div id="op-section">
+      <div class="dash-section-title">OP-Only Topics</div>
+      <div class="topic-grid" id="topic-grid-op"></div>
+    </div>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-header">
+    <button class="quiz-back" onclick="backToDashboard()">←</button>
+    <div class="quiz-header-info">
+      <div class="topic-title" id="quiz-topic-title"></div>
+      <div class="q-counter" id="quiz-q-counter"></div>
+    </div>
+  </div>
+  <div class="quiz-progress-bar"><div class="quiz-progress-fill" id="quiz-progress-fill"></div></div>
+  <div class="quiz-body" id="quiz-body"></div>
+  <div class="quiz-footer">
+    <button class="btn-submit" id="btn-submit" onclick="submitAnswer()" disabled>Submit Answer</button>
+  </div>
+</div>
+
+<!-- RESULT -->
+<div id="screen-result" class="screen">
+  <div class="result-card">
+    <div class="result-icon" id="result-icon"></div>
+    <div class="result-title" id="result-title"></div>
+    <div class="result-msg" id="result-msg"></div>
+    <div class="result-score-ring">
+      <svg viewBox="0 0 120 120">
+        <circle class="ring-bg" cx="60" cy="60" r="52"/>
+        <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="52" stroke-dasharray="326.7" stroke-dashoffset="326.7"/>
+      </svg>
+      <div class="result-score-num" id="result-score-num">0%</div>
+    </div>
+    <div class="result-pb" id="result-pb"></div>
+    <button class="btn-retry" id="btn-retry" onclick="retryTopic()" style="display:none">Reattempt Topic</button>
+    <button class="btn-back-dash" onclick="backToDashboard()">Back to Dashboard</button>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div id="screen-leaderboard" class="screen">
+  <div class="lb-header">
+    <button class="quiz-back" onclick="showDashboard()">←</button>
+    <div style="font-size:1rem; font-weight:600">Rankings</div>
+  </div>
+  <div class="lb-body">
+    <div class="lb-title">Top Learners</div>
+    <div class="lb-subtitle">Based on average score across core topics (OP topics excluded)</div>
+    <div id="lb-list"></div>
+  </div>
+</div>
+
+<script>
+const TOPICS = [
+  { id: 1, name: "Pain & Analgesics", opOnly: false },
+  { id: 2, name: "Cough, Cold & Allergies", opOnly: false },
+  { id: 3, name: "Gastrointestinal Disorders", opOnly: false },
+  { id: 4, name: "Antibiotics", opOnly: false },
+  { id: 5, name: "Antifungals & Antivirals", opOnly: false },
+  { id: 6, name: "Skin Conditions", opOnly: false },
+  { id: 7, name: "G6PD", opOnly: false },
+  { id: 8, name: "Paediatrics", opOnly: true },
+  { id: 9, name: "Hypertension", opOnly: false },
+  { id: 10, name: "Hyperlipidemia", opOnly: false },
+  { id: 11, name: "Diabetes", opOnly: false },
+  { id: 12, name: "Asthma & COPD", opOnly: false },
+  { id: 13, name: "Pregnancy & Lactation", opOnly: true },
+];
+
+// Questions bank per topic. type: mcq | mrq | tf | match | listing
+const QUESTION_BANK = {
+  1: [
+    { q: "Which of the following is FALSE about analgesics?", type: "mcq", options: ["Different classes of analgesics work on different parts of the pain pathway", "Paracetamol, NSAIDs and Opioids are different classes of analgesics", "Celecoxib inhibits both COX-1 and COX-2 enzymes", "Topical analgesics have limited absorption into the bloodstream"], ans: [2] },
+    { q: "Which of the following drug–mechanism of action pairing is CORRECT?", type: "mcq", options: ["Diclofenac – inhibits COX-1 enzymes only", "Tramadol – binds to opioid receptors in the CNS", "Etoricoxib – inhibits COX-1 and COX-2 enzymes", "Paracetamol – activates prostaglandin production in the CNS"], ans: [1] },
+    { q: "Which of the following can be bought via Pharmacy (P) sales?", type: "mcq", options: ["Ibuprofen tablets", "Meloxicam tablets", "Anarex tablets", "Tramadol tablets"], ans: [0] },
+    { q: "Which of the following is TRUE regarding opioids?", type: "mcq", options: ["Opioids are usually used for mild to moderate pain", "Doctors may prescribe anti-vomiting medications for use with Tramadol", "The maximum dose of Codeine for pain relief is 400 mg/day", "Opioids may cause drowsiness and diarrhoea"], ans: [1] },
+    { q: "Which of the following is TRUE regarding fever management in children?", type: "mcq", options: ["Start with paracetamol if temperature is 38.5°C or more", "Start with ibuprofen if temperature is 38.5°C or more", "Give the other fever medication 3–4 hours after the first if fever persists", "Paracetamol can only be given for children above 6 months"], ans: [1] },
+  ],
+  2: [
+    { q: "Which of these statements is correct?", type: "mcq", options: ["Oxymetazoline works by opening up blood vessels in nasal passages, reducing congestion", "Sodium Cromoglycate relieves allergies by stabilising cells that release histamine", "Promethazine has anti-cholinergic properties only and cannot be used in cough", "Difflam lozenges have anti-inflammatory, anaesthetic, antiseptic and antiviral properties"], ans: [1] },
+    { q: "For Nasonex nasal spray, which of these counselling points are appropriate?", subitems: ["(i) Shake and prime before first use", "(ii) Blow nose and lie down before inserting applicator", "(iii) Aim nozzle toward nasal septum", "(iv) Breathe in through nose while spraying", "(v) Breathe out through mouth", "(vi) Clean tip with tissue after use", "(vii) Unblock with pin if blocked"], type: "mcq", options: ["i, ii, iii, iv", "i, iii, v, vii", "i, iv, v, vi", "i, v, vi, vii"], ans: [2] },
+    { q: "Ms T has eczema and is collecting Mometasone Furoate 0.1% Cream and Urea Cream. Which counselling point is appropriate?", type: "mcq", options: ["Do not apply Mometasone Cream on wound areas as it may prolong healing", "Urea cream should only be used a few days after the eczema rash has cleared", "Long-term side effects of Mometasone Cream include skin thickening and excessive hair growth", "1 fingertip unit of Mometasone Cream covers an adult forearm"], ans: [0] },
+    { q: "A 45-year-old man is prescribed Diphenhydramine 14mg/5ml Syrup 7.5ml TDS-PRN, Fluimucil 600mg BD-PRN, Difflam lozenges 1 lozenge TDS-PRN, Oxymetazoline 0.05% nose drops 1 drop TDS-PRN. What intervention is needed?", type: "mcq", options: ["Diphenhydramine dose is too low – usual dose is 10ml TDS-PRN", "Fluimucil dose frequency is wrong – usual frequency is OD-PRN", "Difflam dose is wrong – usual dose is 2 lozenges TDS-PRN", "Oxymetazoline nose drops strength is wrong – correct adult strength is 0.1%"], ans: [1] },
+    { q: "Which medication is correctly matched with its possible side effects?", type: "mcq", options: ["Chlorpheniramine – diarrhoea", "Difflam lozenges – blurred vision", "Avamys Nasal Spray – rebound congestion with prolonged use", "Loratadine + Pseudoephedrine – hypertension, palpitations"], ans: [3] },
+    { q: "Which statement regarding cough medications is correct?", type: "mcq", options: ["Cough medications are contraindicated in children <2 years due to risk of respiratory depression or obstruction", "Dextromethorphan is an expectorant", "Ammonium chloride in diphenhydramine expectorants acts as a preservative", "Mucosolvan products contain Bromhexine"], ans: [0] },
+    { q: "Which of these medication doses is appropriate?", type: "mcq", options: ["1-year-old child: Cetirizine 1mg/mL syrup 5ml BD-PRN", "3-year-old child: Acetylcysteine 100mg sachet 2 sachets BD-PRN", "7-year-old child: Diphenhydramine Paed syrup 5mg/5mL 10mL TDS-PRN", "10-year-old child: Dextromethorphan 15mg/5mL linctus 7.5mL TDS-PRN"], ans: [2] },
+  ],
+  3: [
+    { q: "Which of the following is FALSE regarding GERD medications?", type: "mcq", options: ["Alginates react with stomach acid to form a foam raft, acting as a barrier to prevent acid reflux", "Antacids may reduce the absorption of certain medicines such as thyroxine", "Prokinetics inhibit gastric emptying and slow down intestinal motility", "Proton pump inhibitors decrease gastric acid secretion by blocking acid pumps in the stomach"], ans: [2] },
+    { q: "Which of the following drugs is NOT an anti-emetic?", type: "mcq", options: ["Prochlorperazine", "Cinnarizine", "Dimenhydrinate", "Famotidine"], ans: [3] },
+    { q: "Which anti-diarrhoea medicine is recommended for use in infectious diarrhoea?", type: "mcq", options: ["Lomotil", "Charcoal", "Loperamide", "Dhamotil"], ans: [1] },
+    { q: "Which of the following is NOT a non-pharmacological modification to prevent constipation?", type: "mcq", options: ["Drinking 8 glasses of water per day", "Sufficient fibre intake in diet", "Increase level of physical activity", "Limit time to pass bowels to maximum 15 minutes"], ans: [3] },
+    { q: "Which of the following is TRUE regarding Hyoscine butylbromide?", type: "mcq", options: ["It is used for treatment of diarrhoea", "It is an anticholinergic acting on intestinal smooth muscles to reduce spasms", "Minimum age for use is 2 years and above", "Take half to 1 hour after a meal"], ans: [1] },
+    { q: "Which of the following is FALSE regarding haemorrhoids?", type: "mcq", options: ["Diosmin/hesperidin is useful in treating haemorrhoids", "Chronic constipation is a possible cause of haemorrhoids", "Proctosedyl ointment can be purchased via P sales", "Piles or haemorrhoids can develop inside the rectum or around the anus"], ans: [2] },
+    { q: "Which of the following drug–mechanism of action pairing is CORRECT?", type: "mcq", options: ["Fybogel – bulk forming", "Bisacodyl – enema", "Lactulose – stool softener", "Liquid paraffin – stimulant"], ans: [0] },
+    { q: "What is the maximum adult dose of loperamide?", type: "mcq", options: ["4 mg/day", "8 mg/day", "12 mg/day", "16 mg/day"], ans: [3] },
+    { q: "Which of the following is TRUE for Colimix?", type: "mcq", options: ["Minimum age for Colimix is 3 months old", "Dose of Colimix for 6-year-old is 5–10ml OD", "Colimix can be purchased over-the-counter", "Side effects of Colimix include drowsiness"], ans: [3] },
+    { q: "Which of the following are appropriate counselling points?", type: "mcq", options: ["Antacids should be swallowed whole; do not crush or chew", "Omeprazole should be taken half to one hour before meals", "Metoclopramide can be sold via P sales for nausea and vomiting", "Famotidine dose for adults is 10mg BD–TDS"], ans: [1] },
+  ],
+  4: [
+    { q: "Which of the following may contribute to the development of antibiotic resistance? Select ALL that apply.", type: "mrq", options: ["Flushing unused antibiotics into the toilet bowl", "Over-prescribing of antibiotics", "Patients stopping an antibiotic course prematurely", "Overuse of antibiotics in livestock and fish farming"], ans: [0,1,2,3] },
+    { q: "Which of the following statements regarding doxycycline is FALSE?", type: "mcq", options: ["It can discolour urine", "It can cause photosensitivity", "It can be taken daily for up to 6 months for the treatment of acne", "Patients are to remain upright after taking it as it can cause oesophagitis"], ans: [0] },
+    { q: "Mrs S has G6PD deficiency. Which of the following antibiotics are NOT suitable? Select ALL that apply.", type: "mrq", options: ["Bactrim (Trimethoprim/Sulfamethoxazole)", "Clindamycin", "Nitrofurantoin", "Clarithromycin", "Ciprofloxacin", "Chloramphenicol"], ans: [0,2,4,5] },
+    { q: "If a patient has a severe allergic reaction to amoxicillin, which antibiotics should be avoided?", subitems: ["I. Penicillin", "II. Bactrim (Trimethoprim/Sulfamethoxazole)", "III. Doxycycline", "IV. Cephalexin"], type: "mcq", options: ["I only", "I and IV", "III and IV", "II, III and IV"], ans: [1] },
+    { q: "Johan has a prescription for Ciprofloxacin 500mg BD x 7 days and Chloramphenicol 0.5% eye drops 1 drop to left eye TDS x 5 days. Which statement is FALSE?", type: "mcq", options: ["Milk, calcium and antacids should be spaced 2 hours apart from ciprofloxacin", "The minimum age of oral ciprofloxacin is 18 years old", "Chloramphenicol eye drops are to be discarded 2 months after opening", "Closing eyes for 2–3 minutes after administering chloramphenicol eye drops reduces bitter taste"], ans: [2] },
+  ],
+  5: [
+    { q: "Which of the following statements about Fluconazole is FALSE?", type: "mcq", options: ["Fluconazole cannot be bought over Pharmacy sales", "The usual dose to treat vaginal thrush is 150mg as a single dose", "The recommended minimum age to take fluconazole 150mg capsule is 12 years old", "Liver toxicity is one of the side effects of fluconazole"], ans: [0] },
+    { q: "Which statement regarding characteristics of fungal infection is TRUE?", type: "mcq", options: ["Athlete's foot occurs in dry and cool areas of the feet", "In nail fungal infection, the nails are thin and reddish", "Vaginal thrush produces a yellowish-green discharge", "White spots (versicolor) have scaly white patches on the skin"], ans: [3] },
+    { q: "Which of the following are side effects of Itraconazole?", subitems: ["(i) Constipation", "(ii) Rash", "(iii) Liver toxicity", "(iv) Nausea & Vomiting"], type: "mcq", options: ["i, ii", "i, ii, iii", "ii, iv", "ii, iii, iv"], ans: [3] },
+    { q: "Which of the following is TRUE about oral Acyclovir?", type: "mcq", options: ["Adult dose for Varicella zoster infection is 400mg 5 times a day", "Adult dose for HSV infection is 100mg 5 times a day", "Neurotoxicity is one of the side effects of Acyclovir", "Acyclovir does not require dose adjustment for CKD patients"], ans: [2] },
+    { q: "What is the common dose of PAXLOVID for COVID-19 in adults?", type: "mcq", options: ["2 pink + 1 white tablet together twice daily for 8 days", "2 pink + 2 white tablets together twice daily for 5 days", "1 pink + 1 white tablet together twice daily for 8 days", "2 pink + 1 white tablet together twice daily for 5 days"], ans: [3] },
+    { q: "Which statement regarding fungal infections is TRUE?", type: "mcq", options: ["Fungal infections are restricted to the outer layer of the skin", "Skin fungal infections generally cause fever", "All fungal infections present with the same signs and symptoms on the skin", "Different sites of fungal infection may require different dosage forms"], ans: [3] },
+    { q: "Which of the following is/are used to treat fungal nail infections? Select ALL that apply.", type: "mrq", options: ["Acyclovir tablets", "Itraconazole capsules", "Nystatin suspension", "Clotrimazole lotion"], ans: [1,3] },
+    { q: "True or False: PAXLOVID interacts with many drugs and may cause serious side effects when taken together.", type: "tf", ans: true },
+    { q: "Which dose of Ketoconazole Shampoo for TREATMENT is correct?", type: "mcq", options: ["Dandruff: OD x 5 days", "Dandruff: BD x 5 days", "White spots: OD x 5 days", "White spots: 2x/week"], ans: [2] },
+    { q: "Which statements are TRUE? Select ALL that apply.", type: "mrq", options: ["Molnupiravir is indicated for genital herpes infection", "Molnupiravir 2 tablets BD is the common dose for children <12 years", "Male patients taking Molnupiravir should use contraception for minimum 3 months", "Molnupiravir should be avoided during pregnancy but is safe when breastfeeding"], ans: [2] },
+  ],
+  6: [
+    { q: "Which statement about topical acne medications is correct?", type: "mcq", options: ["Clindamycin lotion works by exfoliating and clearing blocked pores", "All topical acne medications can be purchased without a prescription", "Acne medications take effect quickly; improvement is often seen within 2–3 days", "Mild stinging and burning sensation may be caused by some acne medications"], ans: [3] },
+    { q: "You are dispensing Benzoyl Peroxide gel and Clindamycin solution to a young adult with acne. Which counselling point is appropriate?", type: "mcq", options: ["Wash your skin with cleanser before applying medication with clean hands", "Wash the affected area more than 3 times a day to kill bacteria", "Use oil-based cosmetics because they work better in covering up acne", "Acne medications can be used safely near the eyes, mouth and nose"], ans: [0] },
+    { q: "The difference between scabies and head lice infestation is that:", type: "mcq", options: ["Scabies mites are larger and can be seen with the naked eye", "Scabies may affect all body parts, while head lice usually affect head, eyebrows and eyelashes", "Scabies causes itch but head lice do not cause itch", "Scabies is transmitted through bodily fluids only"], ans: [1] },
+    { q: "Which outlines the correct way to use Malathion for head lice?", subitems: ["(I) Rinse hair and comb with fine-toothed comb while wet", "(II) Avoid washing hair before treatment unless submerged in chlorinated pool in last 72h", "(III) Allow hair to dry naturally and leave for minimum 8–12 hours", "(IV) Rub liquid gently into scalp until hair and scalp is thoroughly moistened"], type: "mcq", options: ["IV, III, I, II", "III, IV, I, II", "II, III, IV, I", "II, IV, III, I"], ans: [3] },
+    { q: "Which of these statements about Oracort-E Oral Paste is correct?", type: "mcq", options: ["It is suitable for use in babies >4 months old", "The common dose is OD-PRN", "Apply a small dab by pressing the paste on the ulcer until a thin film develops", "Eat or drink immediately after application to wash off excess paste"], ans: [2] },
+    { q: "Which product is correctly matched to its indication?", type: "mcq", options: ["Coal Tar 10% Solution in Aqueous Cream – Dandruff", "Silicone cream – Treatment of burns", "Silvin cream – Protects against moisture loss and chemical irritants", "Olive oil – Cradle cap"], ans: [3] },
+    { q: "Which counselling point is correct?", type: "mcq", options: ["Potassium Permanganate 0.1% w/v Solution should be diluted 1:3 with water", "Thymol Mouthwash should be diluted 1:4 with warm water", "Chlorhexidine 0.05% Cutaneous Solution should be discarded 1 week after opening", "All the antiseptic preparations listed may be purchased without a doctor's prescription"], ans: [3] },
+  ],
+  7: [
+    { q: "Which statement about G6PD deficiency is FALSE?", type: "mcq", options: ["G6PD deficiency is an inherited genetic condition", "There are different degrees of G6PD deficiency in each individual", "Certain medications and foods can lead to haemolytic episodes in G6PD-deficient patients", "G6PD is an enzyme that causes the breakdown of red blood cells"], ans: [3] },
+    { q: "Which are signs and symptoms of haemolysis? Select ALL that apply.", type: "mrq", options: ["Pale-looking skin", "Slow breathing rate", "Pain at the abdomen", "Yellowing of the skin"], ans: [0,2,3] },
+    { q: "Which medications are probably safe in usual therapeutic doses in patients with G6PD?", type: "mcq", options: ["Chloramphenicol", "Ciprofloxacin", "Colchicine", "Nitrofurantoin"], ans: [2] },
+    { q: "Which medications are likely UNSAFE in G6PD-deficient patients? Select ALL that apply.", type: "mrq", options: ["Bactrim (Trimethoprim & Sulfamethoxazole)", "Glipizide", "Phenytoin", "Tolbutamide"], ans: [0,1,3] },
+    { q: "Which options should G6PD-deficient patients avoid? Select ALL that apply.", type: "mrq", options: ["Broad beans", "Red beans", "Mothballs", "Cedar chips"], ans: [0,2] },
+  ],
+  8: [
+    { q: "Which dose and frequency of Ibuprofen for use in children is CORRECT?", type: "mcq", options: ["2.5–5 mg/kg/dose q4–6h PRN", "5–10 mg/kg/dose q6–8h PRN", "10–15 mg/kg/dose q4–6h PRN", "15–20 mg/kg/dose q6–8h PRN"], ans: [1] },
+    { q: "A 7-year-old girl was prescribed amoxicillin 125mg/5ml suspension 10ml TDS x 7 days. Which counselling point is INCORRECT?", type: "mcq", options: ["Add cool boiled water to slightly below the marking, shake vigorously, then top up to marking", "Shake the preparation well before use", "Store in the fridge after reconstitution", "If you have more than one bottle, you may reconstitute every bottle at once"], ans: [3] },
+    { q: "Which is CORRECT about managing cough and cold in a 1-year-old child?", type: "mcq", options: ["Chlorpheniramine can be used to relieve runny nose", "Acetylcysteine 100mg TDS-PRN is suitable for phlegm", "Oxymetazoline nose drops 0.025% can be used for blocked nose", "Oxymetazoline nose drops can be used for up to 7 consecutive days"], ans: [2] },
+    { q: "Which is CORRECT about managing diarrhoea in a 2-year-old child?", type: "mcq", options: ["Colimix 5ml QDS can be given to relieve gastric cramps", "Give Yakult drinks as it contains probiotics to restore intestinal flora", "The primary goal of treatment is to stop watery stool as early as possible", "Fatty food should be given to avoid weight loss during diarrhoea"], ans: [0] },
+    { q: "Which counselling point for children with fever is INCORRECT?", type: "mcq", options: ["If fever persists >3 days with or without treatment, consult a doctor", "Start ibuprofen if temperature >37.5°C", "Start ibuprofen if fever does not subside 1–2 hours after taking paracetamol", "Overdose of paracetamol may cause liver issues"], ans: [1] },
+  ],
+  9: [
+    { q: "Which is the CORRECT maximum dose of the drug?", type: "mcq", options: ["Telmisartan 120 mg/day", "Valsartan 320 mg/day", "Carvedilol 100 mg/day", "Hydralazine 450 mg/day"], ans: [1] },
+    { q: "Which drug CORRECTLY matches its drug class?", type: "mcq", options: ["Indapamide – Diuretics", "Methyldopa – Alpha Blockers", "Perindopril – Angiotensin Receptor Blockers", "Carvedilol – Calcium Channel Blockers"], ans: [0] },
+    { q: "Which is INCORRECT about hypertension management?", type: "mcq", options: ["The BP target for patients with proteinuria is 140/90 mmHg", "The BP target for elderly ≥80 yrs is 150/90 mmHg", "Majority of patients may require 2 or more medications to reach BP goal", "Peripheral arterial disease is one of the complications of hypertension"], ans: [0] },
+    { q: "Which is CORRECT about home blood pressure monitoring?", subitems: ["(i) Take BP with a full bladder or after a big meal for more accurate reading", "(ii) Take at least 2 BP readings during each measurement, 15–20 minutes apart", "(iii) Do not move around or talk when taking BP", "(iv) Home BP monitor should be validated every 2 years", "(v) Avoid smoking, caffeinated beverages, or exercise within 30 minutes before BP measurements", "(vi) Do not cross legs while taking BP"], type: "mcq", options: ["i, ii, iv", "iii, v, vi", "ii, iii, vi", "All of the above"], ans: [1] },
+    { q: "Mr ABC (45y, hypertension, T2DM) is prescribed Losartan 125mg OM, Amlodipine 5mg OM, Hydrochlorothiazide 12.5mg OM (new), Metformin 850mg TDS. Which is CORRECT?", type: "mcq", options: ["Counsel on risk of dry cough as Hydrochlorothiazide is newly started", "Remind patient to avoid grapefruit which can affect his current medication", "Intervene on Hydrochlorothiazide initiation as combination with Losartan is not recommended", "Losartan 125mg OM is an appropriate dose for hypertension"], ans: [1] },
+  ],
+  10: [
+    { q: "Which statement is correct about hyperlipidaemia?", type: "mcq", options: ["Cholesterol is an unwanted substance not required in the body", "Cholesterol can be obtained from the diet or synthesised in the liver", "Triglyceride is stored in the blood cells", "Very high levels of triglyceride can lead to inflammation of the kidneys"], ans: [1] },
+    { q: "Which is matched to its correct maximum dose?", type: "mcq", options: ["Atorvastatin 40 mg/day", "Rosuvastatin 80 mg/day", "Gemfibrozil 1200 mg/day", "Lipanthyl micronized Fenofibrate 300 mg/day"], ans: [2] },
+    { q: "Patient ABC is on Metformin, Glipizide, Amlodipine 10mg, Fenofibrate 100mg, Colchicine 500mcg TDS-PRN and is started on Simvastatin 20mg ON. Which is most appropriate?", type: "mcq", options: ["Proceed to dispense to patient", "Advise patient to withhold Simvastatin when taking Colchicine for acute gout pain", "Intervene to switch Fenofibrate to Gemfibrozil as Fenofibrate should not be taken with Simvastatin", "Intervene to switch to another statin as patient is on Amlodipine 10mg"], ans: [1] },
+    { q: "Patient XYZ is newly started on Rosuvastatin 10mg ON. What would you counsel?", subitems: ["(i) It is advisable to be taken at night as cholesterol is mostly synthesised at night", "(ii) Watch out for signs of liver injury – dark coloured urine, light coloured stools, nausea, vomiting, loss of appetite, stomach pain, yellowing of eyes and skin", "(iii) Watch out for signs of rhabdomyolysis – unexplained muscle pain, weakness, tenderness or tea-coloured urine", "(iv) Avoid taking grapefruit/grapefruit juice as it may reduce the clearance of statins, increasing risk of side effects"], type: "mcq", options: ["i and ii", "ii and iii", "iii and iv", "i and iv"], ans: [1] },
+  ],
+  11: [
+    { q: "Which is NOT a typical symptom of hypoglycaemia?", type: "mcq", options: ["Sweating", "Shaking", "Feeling tired", "Thirsty"], ans: [3] },
+    { q: "Which drug is paired INCORRECTLY to its drug class?", type: "mcq", options: ["SGLT-2 Inhibitor – Linagliptin", "Sulphonylurea – Tolbutamide", "Biguanides – Metformin", "Alpha-Glucosidase Inhibitor – Acarbose"], ans: [0] },
+    { q: "Which are the modes of action of Linagliptin?", subitems: ["(I) Increases excretion of glucose in the urine", "(II) Increases insulin synthesis and release", "(III) Increases glucose uptake into muscles", "(IV) Decreases glucagon secretion"], type: "mcq", options: ["I and IV", "II and III", "I and III", "II and IV"], ans: [3] },
+    { q: "Which is NOT a complication of uncontrolled diabetes?", type: "mcq", options: ["Kidney disease", "Retinopathy", "Neuropathy", "Myopathy"], ans: [3] },
+    { q: "Which is a rapid-acting insulin?", type: "mcq", options: ["Insulin Glargine (Lantus)", "Insulin Isophane (Insulatard)", "Insulin glulisine (Apidra)", "Insulin detemir (Levemir)"], ans: [2] },
+    { q: "Which is NOT a side effect of dapagliflozin?", type: "mcq", options: ["Genital infection", "Dehydration", "Upper respiratory tract infection", "Hypotension"], ans: [2] },
+    { q: "Which statement regarding acarbose is TRUE?", type: "mcq", options: ["It works by increasing insulin synthesis and release", "It is usually taken with the first few mouthfuls of food", "The usual daily dose is 100–300mg TDS", "Weight gain is one of its common side effects"], ans: [1] },
+    { q: "Mr BKC who drinks wine regularly is experiencing lactic acidosis. He is on Glipizide, Metformin, Empagliflozin, Lovastatin, Linagliptin, Amlodipine. Which medication is the most likely cause?", type: "mcq", options: ["Metformin", "Linagliptin", "Glipizide", "Empagliflozin"], ans: [0] },
+    { q: "Which dose is INAPPROPRIATE for its medication?", type: "mcq", options: ["Metformin 850mg TDS", "Linagliptin 5mg BD", "Gliclazide MR 120mg OD", "Dapagliflozin 10mg OM"], ans: [1] },
+    { q: "Ms FYH has an allergy to Tolbutamide. Which is NOT a suitable anti-diabetic for her?", type: "mcq", options: ["Acarbose", "Gliclazide", "Sitagliptin", "Empagliflozin"], ans: [1] },
+  ],
+  12: [
+    { q: "Which are DISADVANTAGES of dry powder inhalers? Select ALL that apply.", type: "mrq", options: ["Requires patient to inhale with sufficient force", "Moisture sensitive", "Requires hand-breath coordination", "Patient may fail to load dose correctly", "Lower lung deposition compared to MDI"], ans: [0,1,3] },
+    { q: "Which counselling point for Turbuhaler is INCORRECT?", type: "mcq", options: ["Red mark at top of window = 20 doses left", "Needs priming before first use by turning one direction and back twice", "Should not be washed; clean mouthpiece with dry tissue", "Breathe in gently and deeply through the mouth"], ans: [3] },
+    { q: "Which statements are TRUE about oral corticosteroids? Select ALL that apply.", type: "mrq", options: ["Usually used long-term to control asthma or COPD", "Contraindicated in patients with systemic fungal infection", "Long-term side effects include cataracts, glaucoma and osteoporosis", "Can be bought through a pharmacist without prescription", "Prednisolone is an example of oral corticosteroid"], ans: [1,2,4] },
+    { q: "Asthma and COPD both involve chronic airway inflammation with symptoms of shortness of breath and wheezing, and both are usually presented around mid-life onwards. True or False?", type: "tf", ans: false },
+    { q: "The following act by relaxing airway smooth muscles EXCEPT:", type: "mcq", options: ["Theophylline", "Salbutamol", "Fluticasone", "Umeclidinium"], ans: [2] },
+    { q: "Which drug and common side effect pairing is CORRECT?", type: "mcq", options: ["Beclomethasone inhaler – Dry mouth", "Salbutamol tablets – Fast heartbeat", "Tiotropium inhaler – Oral thrush", "Theophylline – Drowsiness"], ans: [1] },
+    { q: "The following is within the recommended daily dose range EXCEPT:", type: "mcq", options: ["Seretide Accuhaler 50/250, 2 puffs twice daily", "Spiriva Respimat 2.5mcg, 2 puffs once daily", "Symbicort Rapihaler 80/2.25, 8 puffs twice daily", "Anoro Ellipta 62.5/25, 1 puff once daily"], ans: [0] },
+    { q: "Which statement regarding montelukast is INCORRECT?", type: "mcq", options: ["Prevents airway smooth muscle contraction and inflammation", "May cause rare side effects such as nightmares, feeling irritated or anxious", "Usually used for acute asthma attack", "Usual adult dose is 10mg once daily in the evening"], ans: [2] },
+    { q: "The usual dose for Symbicort Turbuhaler 160/4.5 is 2–4 puffs twice daily with a maximum of 8 puffs twice daily; it can also be used as a reliever with a maximum of 12 puffs per occasion. True or False?", type: "tf", ans: false },
+    { q: "Which on Symbicort Rapihaler usage is INCORRECT?", type: "mcq", options: ["Prime new inhaler by shaking gently and actuating 2 times into air", "Arrow on dose counter in yellow area means about 20 doses left", "Clean by taking apart and putting under running water", "Rinse mouth after inhaling to minimise risk of oral thrush"], ans: [2] },
+    { q: "The following are side effects of theophylline EXCEPT:", type: "mcq", options: ["Muscle tremors", "Restlessness", "Nausea", "Slow heartbeat"], ans: [3] },
+  ],
+  13: [
+    { q: "Which statements for constipation and diarrhoea treatment in pregnancy are TRUE? Select ALL that apply.", type: "mrq", options: ["Drugs of choice for constipation in pregnancy are Lactulose and Fybogel", "Senna is an alternative for constipation in pregnancy", "Drug of choice for diarrhoea in pregnancy is Loperamide", "Smecta can be used as an alternative for diarrhoea in pregnancy", "Lacteol Fort can be safely given to pregnant patients"], ans: [0,1,4] },
+    { q: "Which medication is safe for hyperlipidaemia in pregnancy?", type: "mcq", options: ["Ezetimibe", "Rosuvastatin", "Simvastatin", "Omega-3 Fish Oil"], ans: [3] },
+    { q: "Which drugs are appropriate for treatment of hypertension in pregnancy? Select ALL that apply.", type: "mrq", options: ["Enalapril", "Hydralazine", "Losartan", "Nifedipine LA"], ans: [1,3] },
+    { q: "Which treatment options are preferred for diabetes in pregnancy? Select ALL that apply.", type: "mrq", options: ["Aspart (Novorapid)", "Glargine (Lantus)", "Metformin", "Novomix"], ans: [0,2] },
+    { q: "Which analgesics are drugs of choice or alternatives in lactation? Select ALL that apply.", type: "mrq", options: ["Codeine", "Ibuprofen", "Paracetamol", "Paracetamol with Orphenadrine (Anarex)"], ans: [1,2] },
+    { q: "Which medication is suitable for use in lactation (for cough)?", type: "mcq", options: ["Dextromethorphan", "Bromhexine", "Guaifenesin", "None of the above"], ans: [0] },
+    { q: "Which anti-emetics can be used off-label to increase lactation? Select ALL that apply.", type: "mrq", options: ["Dimenhydrinate", "Domperidone", "Metoclopramide", "Prochlorperazine", "Promethazine"], ans: [1,2] },
+    { q: "Drugs that are safe in pregnancy are also safe for breastfeeding. True or False?", type: "tf", ans: false },
+    { q: "Which route of administration shows the correct order of the amount of drug entering breast milk (lowest to highest)?", type: "mcq", options: ["Oral < Inhaled < Intravenous", "Oral < Topical < Intramuscular", "Topical < Intramuscular < Oral", "Inhaled < Oral < Intravenous"], ans: [3] },
+    { q: "ALL herbs and supplements can be safely used in pregnancy and lactation. True or False?", type: "tf", ans: false },
+  ],
+};
+
+// ---- STATE ----
+let state = {
+  name: '',
+  progress: {}, // topicId -> { passed, bestScore, attempts }
+};
+
+function loadState() {
+  try {
+    const saved = localStorage.getItem('pharmamastery_state');
+    if (saved) state = JSON.parse(saved);
+  } catch(e) {}
+}
+
+function saveState() {
+  try {
+    localStorage.setItem('pharmamastery_state', JSON.stringify(state));
+  } catch(e) {}
+}
+
+// ---- QUIZ STATE ----
+let quizState = {};
+
+// ---- SCREENS ----
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+}
+
+// ---- LOGIN ----
+let selectedRole = null;
+
+function selectRole(role) {
+  selectedRole = role;
+  document.getElementById('role-op').classList.toggle('active', role === 'OP');
+  document.getElementById('role-psc').classList.toggle('active', role === 'PSC');
+}
+
+function doLogin() {
+  const name = document.getElementById('login-name').value.trim();
+  if (!name || name.split(' ').filter(w=>w).length < 2 || !selectedRole) {
+    document.getElementById('login-error').style.display = 'block';
+    return;
+  }
+  document.getElementById('login-error').style.display = 'none';
+  state.name = name;
+  state.role = selectedRole;
+  saveState();
+  showDashboard();
+}
+
+document.getElementById('login-name').addEventListener('keydown', e => { if(e.key === 'Enter') doLogin(); });
+
+// ---- DASHBOARD ----
+function showDashboard() {
+  updateDashboard();
+  showScreen('dashboard');
+}
+
+function updateDashboard() {
+  const firstName = state.name.split(' ')[0];
+  document.getElementById('dash-name').textContent = firstName;
+
+  const isOP = state.role === 'OP';
+  const visibleTopics = TOPICS.filter(t => isOP || !t.opOnly);
+  const core = visibleTopics.filter(t => !t.opOnly);
+
+  let completed = 0, scoreSum = 0, scoreCt = 0;
+  for (const t of visibleTopics) {
+    const p = state.progress[t.id];
+    if (p && p.passed) completed++;
+  }
+  for (const t of core) {
+    const p = state.progress[t.id];
+    if (p && p.bestScore != null) { scoreSum += p.bestScore; scoreCt++; }
+  }
+  const avg = scoreCt > 0 ? Math.round(scoreSum / scoreCt) + '%' : '—';
+
+  document.getElementById('stat-completed').textContent = completed;
+  document.getElementById('stat-total').textContent = visibleTopics.length;
+  document.getElementById('stat-avg').textContent = avg;
+
+  let roleBadgeEl = document.getElementById('dash-role-badge');
+  if (!roleBadgeEl) {
+    roleBadgeEl = document.createElement('span');
+    roleBadgeEl.id = 'dash-role-badge';
+    roleBadgeEl.style.cssText = 'display:inline-block;background:rgba(255,255,255,0.2);border-radius:6px;padding:2px 8px;font-size:0.72rem;font-weight:700;letter-spacing:0.06em;margin-left:8px;vertical-align:middle;';
+    document.querySelector('.dash-greeting').appendChild(roleBadgeEl);
+  }
+  roleBadgeEl.textContent = state.role;
+
+  drawFormulationPipeline(completed, visibleTopics.length);
+
+  renderTopicGrid('topic-grid-core', core);
+  const opSection = document.getElementById('op-section');
+  const opTopics = TOPICS.filter(t => t.opOnly);
+  if (isOP) {
+    opSection.style.display = '';
+    renderTopicGrid('topic-grid-op', opTopics);
+  } else {
+    opSection.style.display = 'none';
+  }
+}
+
+function drawFormulationPipeline(completed, total) {
+  const pct = total > 0 ? Math.round((completed / total) * 100) : 0;
+  document.getElementById('form-pct-label').textContent = pct + '% complete';
+
+  const svg = document.getElementById('formulation-svg');
+
+  // 4 stages of the formulation journey
+  const stages = [
+    { label: 'Raw\nIngredients', icon: 'grain',   threshold: 0   },
+    { label: 'Measured\nCompounds',  icon: 'measure', threshold: 0.25 },
+    { label: 'Mixed\nFormulation',   icon: 'mix',     threshold: 0.55 },
+    { label: 'Final\nProduct',       icon: 'product', threshold: 0.85 },
+  ];
+
+  // Colors
+  const C_ACTIVE_BG   = '#e8f7fd';
+  const C_ACTIVE_STR  = '#3EB3E1';
+  const C_DONE_BG     = '#e1f5ee';
+  const C_DONE_STR    = '#009CA2';
+  const C_IDLE_BG     = '#f0f4f8';
+  const C_IDLE_STR    = '#c5d5e4';
+  const C_ICON_ACTIVE = '#19478C';
+  const C_ICON_DONE   = '#007a7f';
+  const C_ICON_IDLE   = '#b0c4d8';
+  const C_TEXT_ACTIVE = '#0d2a50';
+  const C_TEXT_IDLE   = '#9ab5cc';
+  const C_PIPE_DONE   = '#3EB3E1';
+  const C_PIPE_IDLE   = '#dde8f0';
+
+  const ratio = completed / total;
+
+  // Stage state: 'done' | 'active' | 'idle'
+  function stageState(i) {
+    const next = stages[i + 1];
+    if (next && ratio >= next.threshold) return 'done';
+    if (ratio >= stages[i].threshold) return 'active';
+    return 'idle';
+  }
+
+  // Layout: 4 circles + 3 connectors across 340px wide, centered
+  const CX = [36, 118, 206, 294]; // circle centres x
+  const CY = 44;
+  const R  = 26;
+
+  // Particles inside each stage icon (drawn as simple geometric shapes)
+  function iconPath(type, cx, cy) {
+    const ico = { stroke: 'none', fill: C_ICON_IDLE };
+    if (type === 'grain') {
+      // Three small dots = raw powder
+      return `
+        <circle cx="${cx-8}" cy="${cy+2}" r="4"/>
+        <circle cx="${cx+1}" cy="${cy-5}" r="3"/>
+        <circle cx="${cx+8}" cy="${cy+4}" r="3.5"/>`;
+    }
+    if (type === 'measure') {
+      // Beaker outline
+      return `<path d="M${cx-7},${cy-7} L${cx-7},${cy+2} L${cx-12},${cy+9} L${cx+12},${cy+9} L${cx+7},${cy+2} L${cx+7},${cy-7}" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="${cx-4}" y1="${cy-7}" x2="${cx+4}" y2="${cy-7}" stroke-width="1.5" stroke-linecap="round"/>`;
+    }
+    if (type === 'mix') {
+      // Stirrer / spiral
+      return `<path d="M${cx},${cy-8} C${cx+9},${cy-5} ${cx+9},${cy+5} ${cx},${cy+8} C${cx-9},${cy+5} ${cx-9},${cy-5} ${cx},${cy-8}" fill="none" stroke-width="2"/>
+              <circle cx="${cx}" cy="${cy}" r="2.5"/>`;
+    }
+    if (type === 'product') {
+      // Pill capsule
+      return `<rect x="${cx-10}" y="${cy-5}" width="20" height="10" rx="5"/>
+              <line x1="${cx}" y1="${cy-5}" x2="${cx}" y2="${cy+5}" stroke-width="1" stroke="white"/>`;
+    }
+    return '';
+  }
+
+  let out = `<svg id="formulation-svg" viewBox="0 0 340 110" xmlns="http://www.w3.org/2000/svg">`;
+
+  // Stage labels & connectors (drawn first, behind circles)
+  for (let i = 0; i < 4; i++) {
+    const state = stageState(i);
+
+    // Connector pipe to next stage
+    if (i < 3) {
+      const x1 = CX[i] + R, x2 = CX[i+1] - R;
+      const mid = (x1 + x2) / 2;
+      // Pipe fill based on whether next stage is reached
+      const nextState = stageState(i + 1);
+      const pipeColor = (nextState === 'done' || nextState === 'active') ? C_PIPE_DONE : C_PIPE_IDLE;
+      // Animated fill width if currently filling into next stage
+      out += `<rect x="${x1}" y="${CY-4}" width="${x2-x1}" height="8" rx="4" fill="${C_PIPE_IDLE}"/>`;
+      if (nextState !== 'idle') {
+        out += `<rect x="${x1}" y="${CY-4}" width="${x2-x1}" height="8" rx="4" fill="${pipeColor}"/>`;
+      }
+      // Flow arrow chevron
+      const arrowColor = nextState !== 'idle' ? C_PIPE_DONE : C_PIPE_IDLE;
+      out += `<path d="M${mid-4},${CY-4} L${mid+4},${CY} L${mid-4},${CY+4}" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    }
+  }
+
+  // Stage circles
+  for (let i = 0; i < 4; i++) {
+    const st = stageState(i);
+    const bg  = st === 'done' ? C_DONE_BG  : st === 'active' ? C_ACTIVE_BG  : C_IDLE_BG;
+    const str = st === 'done' ? C_DONE_STR : st === 'active' ? C_ACTIVE_STR : C_IDLE_STR;
+    const iconColor = st === 'done' ? C_ICON_DONE : st === 'active' ? C_ICON_ACTIVE : C_ICON_IDLE;
+    const labelColor = st === 'idle' ? C_TEXT_IDLE : C_TEXT_ACTIVE;
+
+    // Circle
+    out += `<circle cx="${CX[i]}" cy="${CY}" r="${R}" fill="${bg}" stroke="${str}" stroke-width="2"/>`;
+
+    // Done checkmark
+    if (st === 'done') {
+      out += `<path d="M${CX[i]-9},${CY} L${CX[i]-3},${CY+7} L${CX[i]+10},${CY-8}" fill="none" stroke="${C_ICON_DONE}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>`;
+    } else {
+      // Icon shape
+      const iconEl = iconPath(stages[i].icon, CX[i], CY);
+      out += `<g stroke="${iconColor}" fill="${iconColor}">${iconEl}</g>`;
+    }
+
+    // Stage number badge
+    const badgeColor = st === 'idle' ? C_IDLE_STR : st === 'done' ? C_DONE_STR : C_ACTIVE_STR;
+    out += `<circle cx="${CX[i]+20}" cy="${CY-20}" r="9" fill="${badgeColor}"/>`;
+    out += `<text x="${CX[i]+20}" y="${CY-16}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9" font-weight="700" fill="white">${i+1}</text>`;
+
+    // Label lines
+    const lines = stages[i].label.split('\n');
+    const labelY = CY + R + 14;
+    out += `<text x="${CX[i]}" y="${labelY}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" font-weight="600" fill="${labelColor}">${lines[0]}</text>`;
+    if (lines[1]) {
+      out += `<text x="${CX[i]}" y="${labelY+12}" text-anchor="middle" font-family="DM Sans,sans-serif" font-size="9.5" font-weight="600" fill="${labelColor}">${lines[1]}</text>`;
+    }
+  }
+
+  // Overall progress bar at bottom
+  const barX = 10, barY = 96, barW = 320, barH = 7;
+  const fillW = Math.round((pct / 100) * barW);
+  out += `<rect x="${barX}" y="${barY}" width="${barW}" height="${barH}" rx="3.5" fill="${C_IDLE_BG}"/>`;
+  if (fillW > 0) {
+    out += `<rect x="${barX}" y="${barY}" width="${fillW}" height="${barH}" rx="3.5" fill="${C_ACTIVE_STR}"/>`;
+  }
+
+  out += `</svg>`;
+  svg.outerHTML = out;
+}
+
+function renderTopicGrid(containerId, topics) {
+  const grid = document.getElementById(containerId);
+  grid.innerHTML = '';
+  for (const t of topics) {
+    const p = state.progress[t.id] || {};
+    let statusIcon = '⬜';
+    let cardClass = '';
+    if (p.passed) { statusIcon = '✅'; cardClass = 'passed'; }
+    else if (p.attempts > 0) { statusIcon = '🔄'; cardClass = 'in-progress'; }
+
+    const card = document.createElement('div');
+    card.className = 'topic-card ' + cardClass;
+    card.onclick = () => startTopic(t.id);
+
+    const qCount = (QUESTION_BANK[t.id] || []).length;
+    const pb = p.bestScore != null ? p.bestScore : null;
+
+    card.innerHTML = `
+      ${t.opOnly ? '<div class="op-badge">OP Only</div>' : ''}
+      <span class="status-icon">${statusIcon}</span>
+      <div class="topic-name">${t.name}</div>
+      <div class="topic-meta">${qCount} question${qCount!==1?'s':''} · ${pb != null ? 'Best: '+pb+'%' : 'Not attempted'}</div>
+      <div class="pb-bar"><div class="pb-fill" style="width:${pb!=null?pb:0}%"></div></div>
+    `;
+    grid.appendChild(card);
+  }
+}
+
+// ---- QUIZ ----
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function startTopic(topicId) {
+  const topic = TOPICS.find(t => t.id === topicId);
+  const rawQs = QUESTION_BANK[topicId] || [];
+  const questions = shuffle(rawQs);
+
+  quizState = {
+    topicId,
+    topicName: topic.name,
+    questions,
+    currentIdx: 0,
+    answers: [],
+    score: null,
+  };
+
+  document.getElementById('quiz-topic-title').textContent = topic.name;
+  renderQuestion();
+  showScreen('quiz');
+}
+
+function formatQuestionText(text, subitems) {
+  let html = `<span>${text}</span>`;
+  if (subitems && subitems.length) {
+    const itemsHtml = subitems.map(item => `<div class="q-subitem">${item}</div>`).join('');
+    html += `<div class="q-subitems">${itemsHtml}</div>`;
+  }
+  return html;
+}
+
+function renderQuestion() {
+  const { questions, currentIdx } = quizState;
+  const q = questions[currentIdx];
+  const total = questions.length;
+
+  document.getElementById('quiz-q-counter').textContent = `Question ${currentIdx+1} of ${total}`;
+  document.getElementById('quiz-progress-fill').style.width = ((currentIdx / total) * 100) + '%';
+  document.getElementById('btn-submit').disabled = true;
+
+  const body = document.getElementById('quiz-body');
+  let typeBadge = 'Multiple Choice';
+  if (q.type === 'mrq') typeBadge = 'Select All That Apply';
+  else if (q.type === 'tf') typeBadge = 'True / False';
+
+  let html = `<div class="q-type-badge">${typeBadge}</div><div class="q-text">${formatQuestionText(q.q, q.subitems)}</div>`;
+
+  if (q.type === 'mcq' || q.type === 'mrq') {
+    const keys = ['A','B','C','D','E','F'];
+    html += q.type === 'mrq' ? '<div class="mrq-hint">Select one or more options</div>' : '';
+    html += '<div class="options-list" id="options-list">';
+    q.options.forEach((opt, i) => {
+      html += `<button class="option-btn" onclick="toggleOption(${i})" data-idx="${i}">
+        <span class="option-key">${keys[i]}</span>
+        <span>${opt}</span>
+      </button>`;
+    });
+    html += '</div>';
+  } else if (q.type === 'tf') {
+    html += `<div class="tf-row">
+      <button class="tf-btn" onclick="selectTF(true)">True</button>
+      <button class="tf-btn" onclick="selectTF(false)">False</button>
+    </div>`;
+  }
+
+  body.innerHTML = html;
+  quizState.currentAnswer = q.type === 'mrq' ? [] : null;
+}
+
+function toggleOption(idx) {
+  const q = quizState.questions[quizState.currentIdx];
+  if (q.type === 'mcq') {
+    quizState.currentAnswer = idx;
+    document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('.option-btn')[idx].classList.add('selected');
+    document.getElementById('btn-submit').disabled = false;
+  } else {
+    const arr = quizState.currentAnswer;
+    const pos = arr.indexOf(idx);
+    if (pos === -1) arr.push(idx);
+    else arr.splice(pos, 1);
+    document.querySelectorAll('.option-btn').forEach((b, i) => {
+      b.classList.toggle('selected', arr.includes(i));
+    });
+    document.getElementById('btn-submit').disabled = arr.length === 0;
+  }
+}
+
+function selectTF(val) {
+  quizState.currentAnswer = val;
+  document.querySelectorAll('.tf-btn').forEach(b => {
+    b.classList.toggle('selected', (b.textContent === 'True') === val);
+  });
+  document.getElementById('btn-submit').disabled = false;
+}
+
+function submitAnswer() {
+  const q = quizState.questions[quizState.currentIdx];
+  let isCorrect = false;
+
+  if (q.type === 'mcq') {
+    isCorrect = quizState.currentAnswer === q.ans[0];
+  } else if (q.type === 'mrq') {
+    const given = [...quizState.currentAnswer].sort().join(',');
+    const expected = [...q.ans].sort().join(',');
+    isCorrect = given === expected;
+  } else if (q.type === 'tf') {
+    isCorrect = quizState.currentAnswer === q.ans;
+  }
+
+  quizState.answers.push(isCorrect);
+
+  if (quizState.currentIdx + 1 < quizState.questions.length) {
+    quizState.currentIdx++;
+    renderQuestion();
+  } else {
+    finishQuiz();
+  }
+}
+
+function finishQuiz() {
+  const correct = quizState.answers.filter(a => a).length;
+  const total = quizState.questions.length;
+  const score = Math.round((correct / total) * 100);
+  const passed = score >= 70;
+
+  // Update progress
+  const prev = state.progress[quizState.topicId] || { passed: false, bestScore: null, attempts: 0 };
+  prev.attempts = (prev.attempts || 0) + 1;
+  if (prev.bestScore === null || score > prev.bestScore) prev.bestScore = score;
+  if (passed) prev.passed = true;
+  state.progress[quizState.topicId] = prev;
+  saveState();
+
+  updateLeaderboard();
+  showResult(score, passed, prev.bestScore);
+}
+
+function showResult(score, passed, bestScore) {
+  const icon = document.getElementById('result-icon');
+  const title = document.getElementById('result-title');
+  const msg = document.getElementById('result-msg');
+  const pb = document.getElementById('result-pb');
+  const ring = document.getElementById('ring-fill');
+  const scoreNum = document.getElementById('result-score-num');
+  const retryBtn = document.getElementById('btn-retry');
+
+  icon.className = 'result-icon ' + (passed ? 'pass' : 'fail');
+  icon.textContent = passed ? '🎉' : '💪';
+  title.className = 'result-title ' + (passed ? 'pass' : 'fail');
+  title.textContent = passed ? 'Topic Mastered!' : 'Keep Going!';
+  msg.textContent = passed
+    ? 'Excellent work — this topic is now marked as completed.'
+    : 'Reattempt required to achieve mastery. You\'re almost there!';
+
+  scoreNum.textContent = score + '%';
+  pb.textContent = bestScore != null ? '⭐ Personal Best: ' + bestScore + '%' : '';
+
+  const circumference = 326.7;
+  const offset = circumference - (score / 100) * circumference;
+  ring.className = 'ring-fill ' + (passed ? 'pass' : 'fail');
+  ring.style.strokeDashoffset = circumference;
+  setTimeout(() => { ring.style.strokeDashoffset = offset; }, 100);
+
+  retryBtn.style.display = passed ? 'block' : 'block';
+  retryBtn.textContent = passed ? 'Reattempt to Improve' : 'Try Again';
+
+  showScreen('result');
+}
+
+function retryTopic() {
+  startTopic(quizState.topicId);
+}
+
+function backToDashboard() {
+  showDashboard();
+}
+
+// ---- LEADERBOARD ----
+function updateLeaderboard() {
+  let lb = [];
+  try { lb = JSON.parse(localStorage.getItem('pharmamastery_lb') || '[]'); } catch(e) {}
+
+  const coreTopics = TOPICS.filter(t => !t.opOnly);
+  let scoreSum = 0, scoreCt = 0, completedCt = 0;
+  for (const t of coreTopics) {
+    const p = state.progress[t.id];
+    if (p && p.bestScore != null) { scoreSum += p.bestScore; scoreCt++; }
+    if (p && p.passed) completedCt++;
+  }
+  const avg = scoreCt > 0 ? Math.round(scoreSum / scoreCt) : 0;
+
+  const existing = lb.findIndex(e => e.name === state.name);
+  const entry = { name: state.name, avg, completed: completedCt };
+  if (existing >= 0) lb[existing] = entry;
+  else lb.push(entry);
+  lb.sort((a,b) => b.avg - a.avg || b.completed - a.completed);
+
+  localStorage.setItem('pharmamastery_lb', JSON.stringify(lb));
+}
+
+function showLeaderboard() {
+  let lb = [];
+  try { lb = JSON.parse(localStorage.getItem('pharmamastery_lb') || '[]'); } catch(e) {}
+
+  const list = document.getElementById('lb-list');
+  if (lb.length === 0) {
+    list.innerHTML = '<div class="lb-empty">No rankings yet. Complete some topics to appear here!</div>';
+  } else {
+    list.innerHTML = '';
+    lb.slice(0, 20).forEach((entry, i) => {
+      const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+      const rankLabel = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i+1);
+      const isMe = entry.name === state.name;
+      const row = document.createElement('div');
+      row.className = 'lb-row';
+      row.innerHTML = `
+        <div class="lb-rank ${rankClass}">${rankLabel}</div>
+        <div>
+          <div class="lb-name ${isMe ? 'me' : ''}">${entry.name}${isMe ? ' (You)' : ''}</div>
+          <div class="lb-topics">${entry.completed} core topics completed</div>
+        </div>
+        <div class="lb-score">${entry.avg}%</div>
+      `;
+      list.appendChild(row);
+    });
+  }
+  showScreen('leaderboard');
+}
+
+// ---- INIT ----
+loadState();
+if (state.name && state.role) {
+  selectedRole = state.role;
+  showDashboard();
+} else {
+  showScreen('login');
+}
+</script>
+</body>
+</html>
